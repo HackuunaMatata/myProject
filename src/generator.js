@@ -20,9 +20,7 @@ function passwordGen() {
 
     myWord();
 
-    inner(pasLength);
-
-    setTimeout(copyToBuffer, 100);
+    inner();
 }
 
 function generateArray(length) {
@@ -46,18 +44,8 @@ function generateArray(length) {
     return string;
 }
 
-function copyToBuffer() {
-    window.prompt("Чтобы скопировать текст в буфер обмена, нажмите Ctrl+C и Enter", result)
-}
-
-function inner(pasLength) {
-    if (pasLength <= 100) {
-        document.getElementById('out').innerHTML = "Пароль: " + result;
-    }
-    else {
-        document.getElementById('out').innerHTML = "Длина Вашего пароля больше 100 символов.";
-    }
-    document.getElementById('message').innerHTML = "Вы можете скопировать пароль";
+function inner() {
+    $("[name='password']").html(result);
 }
 
 function myWord() {
