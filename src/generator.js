@@ -1,12 +1,18 @@
 var result;
 var pasLength;
 
+$(document).ready(function() {
+    $("input[name='char']").change(function() {
+        $("[name='number']").prop('disabled', this.value != 'a1');
+    });
+});
+
 function passwordGen() {
-    pasLength = document.getElementsByName("length")[0].value;
+    pasLength = $("[name='length']").val();
 
     var string = generateArray(pasLength);
 
-    if (document.getElementsByName("number")[1].checked) {
+    if (!$("[name='number']").prop('disabled') && $("[name='number']:eq(1)").prop('checked')) {
         string = withoutNumbers(string);
     }
 
@@ -20,7 +26,7 @@ function passwordGen() {
 }
 
 function generateArray(length) {
-    var string = "";
+    var string;
     var passwordArray = new Uint32Array(Math.ceil(length / 10) * 2);
     window.crypto.getRandomValues(passwordArray);
 
@@ -34,7 +40,7 @@ function generateArray(length) {
     //     }
     // }
 
-    var flag = document.getElementsByName("char")[0].checked;
+    var flag = $("[name='char']:eq(0)").prop('checked');
     string = passwordArray.reduce((res, srt) => res += flag ? srt.toString(36) : srt, '');
 
     return string;
@@ -55,7 +61,7 @@ function inner(pasLength) {
 }
 
 function myWord() {
-    var word = document.getElementsByName("word")[0].value;
+    var word = $("[name='word']:eq(0)").val();
     if (word.length >= result.length) return;
     if (word === "") return;
     var position;
@@ -65,8 +71,7 @@ function myWord() {
     while ((position + word.length) > result.length);
 
     var str = result.substr(position, word.length);
-    var newResult = result.replace(str, word);
-    result = newResult;
+    result = result.replace(str, word);
 }
 
 function withoutNumbers(string) {
