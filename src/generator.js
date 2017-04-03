@@ -4,6 +4,7 @@ var pasLength;
 $(document).ready(function() {
     $("input[name='char']").change(function() {
         $("[name='number']").prop('disabled', this.value != 'a1');
+        $("[name='bigChar']").prop('disabled', this.value != 'a1');
     });
 });
 
@@ -27,16 +28,6 @@ function generateArray(length) {
     var string;
     var passwordArray = new Uint32Array(Math.ceil(length / 10) * 2);
     window.crypto.getRandomValues(passwordArray);
-
-    // if (document.getElementsByName("char")[0].checked) {
-    //     for (var i = 0; i < passwordArray.length; i++) {
-    //         string += passwordArray[i].toString(36);
-    //     }
-    // } else {
-    //     for (var i = 0; i < passwordArray.length; i++) {
-    //         string += passwordArray[i];
-    //     }
-    // }
 
     var flag = $("[name='char']:eq(0)").prop('checked');
     string = passwordArray.reduce((res, srt) => res += flag ? srt.toString(36) : srt, '');
