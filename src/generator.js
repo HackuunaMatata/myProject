@@ -1,8 +1,8 @@
 var result;
 var pasLength;
 
-$(document).ready(function() {
-    $("input[name='char']").change(function() {
+$(document).ready(function () {
+    $("input[name='char']").change(function () {
         $("[name='number']").prop('disabled', this.value != 'a1');
         $("[name='bigChar']").prop('disabled', this.value != 'a1');
     });
@@ -20,6 +20,10 @@ function passwordGen() {
     result = string.substring(0, pasLength);
 
     myWord();
+
+    if (!$("[name='bigChar']").prop('disabled') && $("[name='bigChar']:eq(0)").prop('checked')) {
+        result = addBigChars(result);
+    }
 
     inner();
 }
@@ -51,6 +55,39 @@ function myWord() {
 
     var str = result.substr(position, word.length);
     result = result.replace(str, word);
+}
+
+function addBigChars(string) {
+    var word = $("[name='word']:eq(0)").val();
+    var index = [];
+    if (word !== "") {
+        var regexp = new RegExp(`${word}`, "ig");
+        var coincidence;
+        while(coincidence = regexp.exec(string)) {
+            index.push(coincidence.index);
+        }
+        string = string.split(word);
+        var newString = "";
+        for (var i = 0; i < string.length; i++) {
+            newString += string[i];
+        }
+        string = newString;
+    }
+    for (var i = 0; i <= Math.round(Math.random() * (string.length - 1)); i++) {
+        var j = Math.round(Math.random()*(string.length-1));
+        if (!isNaN(string[j])) {
+            i--;
+            continue;
+        }
+        var bigChar = string[j].toUpperCase();
+        string = string.replace(string[j], bigChar);
+    }
+    if(word !== "") {
+        for(var i = 0; i<index.length; i++) {
+            string = string.substring(0, index[i]) + word + string.substring(index[i]);
+        }
+    }
+    return string;
 }
 
 function withoutNumbers(string) {
