@@ -22,7 +22,7 @@ function passwordGen() {
     myWord();
 
     if (!$("[name='bigChar']").prop('disabled') && $("[name='bigChar']:eq(0)").prop('checked')) {
-        result = addBigChars(result);
+        result = addBigCharsAndSpecSymbols(result);
     }
 
     inner();
@@ -57,13 +57,13 @@ function myWord() {
     result = result.replace(str, word);
 }
 
-function addBigChars(string) {
+function addBigCharsAndSpecSymbols(string) {
     var word = $("[name='word']:eq(0)").val();
     var index = [];
     if (word !== "") {
         var regexp = new RegExp(`${word}`, "ig");
         var coincidence;
-        while(coincidence = regexp.exec(string)) {
+        while (coincidence = regexp.exec(string)) {
             index.push(coincidence.index);
         }
         string = string.split(word);
@@ -73,19 +73,32 @@ function addBigChars(string) {
         }
         string = newString;
     }
+    // string = addSpecSymbols(string);
+    string = addBigChars(string);
+    if (word !== "") {
+        for (var i = 0; i < index.length; i++) {
+            string = string.substring(0, index[i]) + word + string.substring(index[i]);
+        }
+    }
+    return string;
+}
+
+function addBigChars(string) {
+    var count = 0;
+    for (var i = 0; i < string.length; i++) {
+        if (('a' <= string[i]) && (string[i] <= 'z')) count++;
+    }
+    var check = false;
+    if (count > 0) check = true;
+    if (!check) return string;
     for (var i = 0; i <= Math.round(Math.random() * (string.length - 1)); i++) {
-        var j = Math.round(Math.random()*(string.length-1));
-        if (!isNaN(string[j])) {
+        var j = Math.round(Math.random() * (string.length - 1));
+        if (!(('a' <= string[j]) && (string[j] <= 'z'))) {
             i--;
             continue;
         }
         var bigChar = string[j].toUpperCase();
         string = string.replace(string[j], bigChar);
-    }
-    if(word !== "") {
-        for(var i = 0; i<index.length; i++) {
-            string = string.substring(0, index[i]) + word + string.substring(index[i]);
-        }
     }
     return string;
 }
@@ -99,3 +112,10 @@ function withoutNumbers(string) {
     }
     return newString;
 }
+
+// function addSpecSymbols(string) {
+//     var decision = $("[name='specSymbols']:eq(1)").prop('checked');
+//     if (!decision) return string;
+//     var symbols = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "+", "=", ";", ":", ",", ".", "/", "?", "\", "|", "`", "~", "[", "]", "{", "}"];
+//     return string;
+// }
