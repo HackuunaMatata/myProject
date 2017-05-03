@@ -5,7 +5,7 @@ function passwordGen() {
     length = document.getElementsByName('length')[0].value; // get the password's length
     var password = generateBasePassword(length); // generate the base password
     if (!document.getElementsByName('numbers')[0].checked && document.getElementsByName('chars')[0].checked) { // if element 'numbers' is not check
-        password = withoutNumbers(password, length); // generate the password without numbers
+        password = withoutNumbers(password); // generate the password without numbers
     }
     password = withUserWord(password); // generate the password with user's word
     if (document.getElementsByName('bigChars')[0].checked && document.getElementsByName('chars')[0].checked) {
