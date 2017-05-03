@@ -49,7 +49,7 @@ function withoutNumbers(password) { // generate the password without numbers
 }
 
 function withBigChars(password) { // generate the password with big chars
-    var word = document.getElementsByName('word')[0].value; // get the user's word
+    var word = document.getElementsByName('word')[0].value.replace(/ /g, ''); // get the user's word
     var index = -1; // index of the first position
     var newString = password;
     if (word.length !== 0) { // if we have the user's word
@@ -78,7 +78,7 @@ function withBigChars(password) { // generate the password with big chars
 }
 
 function withSpecials(password) { // generate the password with special symbols
-    var word = document.getElementsByName('word')[0].value; // get the user's word
+    var word = document.getElementsByName('word')[0].value.replace(/ /g, ''); // get the user's word
     var index = -1; // index of the first position
     var newString = password;
     if (word.length !== 0) { // if we have the user's word
@@ -106,7 +106,7 @@ function withSpecials(password) { // generate the password with special symbols
 }
 
 function withUserWord(password) { // generate the password with user's word
-    var word = document.getElementsByName('word')[0].value; // get the word
+    var word = document.getElementsByName('word')[0].value.replace(/ /g, ''); // get the word
     // if its length more than password's length or we have not user's word do nothing
     if (word.length > password.length || word.length === 0) return password;
     var position = Math.round(Math.random() * password.length - word.length); // set the start position of the word in the password
