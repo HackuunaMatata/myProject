@@ -40,7 +40,7 @@ function generateBasePassword(length) { // generate the password with only numbe
 
 function withoutNumbers(password) { // generate the password without numbers
     var newString = password.replace(/\d/g, ''); // delete all digits from the password
-    if (newString.length < length) { // is password's length is too small
+    if (newString.length < length) { // the password's length is too small
         var count = length - newString.length; // count the missing length
         newString += generateBasePassword(count); // generate the missing part of password
         newString = withoutNumbers(newString); // do all again
