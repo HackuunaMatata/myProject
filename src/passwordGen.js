@@ -18,18 +18,21 @@ function passwordGen() {
     return password;
 }
 
-function checkPassword() {
-    var password = passwordGen().replace(document.getElementsByName('word')[0].value.replace(/ /g, ''), '');
-    var chars = document.getElementsByName('chars')[0].checked ? password.search(/[a-z]/) : 0;
-    var bigChars = document.getElementsByName('bigChars')[0].checked ? password.search(/[A-Z]/) : 0;
-    var numbers = document.getElementsByName('numbers')[0].checked ? password.search(/\d/) : 0;
-    var specials = document.getElementsByName('specials')[0].checked ? password.search(/[!@#$%^&*()\-_+=;:,./?\\|`~[\]{}]/) : 0;
+function checkPassword() { // it even 2 crutches, but without them in any way
+    // the password's length checking
     if (document.getElementsByName('chars')[0].checked + document.getElementsByName('bigChars')[0].checked +
         document.getElementsByName('numbers')[0].checked + document.getElementsByName('specials')[0].checked +
         document.getElementsByName('word')[0].value.replace(/ /g, '').length >= document.getElementsByName('length')[0].value) {
         document.getElementsByName('password')[0].innerHTML = "Слишком маленькая длина пароля для таких настроек";
         return;
     }
+    // verification of the password on observance of all conditions
+    var password = passwordGen().replace(document.getElementsByName('word')[0].value.replace(/ /g, ''), '');
+    var chars = document.getElementsByName('chars')[0].checked ? password.search(/[a-z]/) : 0;
+    var bigChars = document.getElementsByName('bigChars')[0].checked && !document.getElementsByName('bigChars')[0].disabled ? password.search(/[A-Z]/) : 0;
+    var numbers = document.getElementsByName('numbers')[0].checked ? password.search(/\d/) : 0;
+    var specials = document.getElementsByName('specials')[0].checked ? password.search(/[!@#$%^&*()\-_+=;:,./?\\|`~[\]{}]/) : 0;
+    // generation of the password all conditions won't be satisfied yet
     if (chars === -1 || bigChars === -1 || numbers === -1 || specials === -1) {
         checkPassword();
     }
