@@ -84,9 +84,10 @@ function withSpecials(password) { // generate the password with special symbols
         index = password.search(word); // find the first word
     }
     var count = 0;
-    for (var i = 0; i < newString.length; i++) { // count number of small chars in the string
+    for (var i = 0; i < newString.length; i++) { // count number of small chars and numbers in the string
         if (('a' <= newString[i]) && (newString[i] <= 'z') || isFinite(newString[i])) count++;
     }
+    if (count === 0) return password; // if we do not have small chars and numbers in the string return password
     var sChar;
     var symbol;
     for (var i = 0; i <= Math.round(Math.random() * (newString.length - 1)); i++) { // replace random small chars with special symbols
