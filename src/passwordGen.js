@@ -54,7 +54,6 @@ function withBigChars(password) { // generate the password with big chars
     var newString = password;
     if (word.length !== 0) { // if we have the user's word
         index = password.search(word); // find the first word
-        newString.replace(word); // and delete it from the string
     }
     var count = 0;
     for (var i = 0; i < newString.length; i++) { // count number of chars in the string
@@ -83,7 +82,6 @@ function withSpecials(password) { // generate the password with special symbols
     var newString = password;
     if (word.length !== 0) { // if we have the user's word
         index = password.search(word); // find the first word
-        newString.replace(word); // and delete it from the string
     }
     var count = 0;
     for (var i = 0; i < newString.length; i++) { // count number of small chars in the string
