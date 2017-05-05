@@ -109,7 +109,11 @@ function withUserWord(password) { // generate the password with user's word
     var word = document.getElementsByName('word')[0].value.replace(/ /g, ''); // get the word
     // if its length more than password's length or we have not user's word do nothing
     if (word.length > password.length || word.length === 0) return password;
-    var position = Math.round(Math.random() * password.length - word.length); // set the start position of the word in the password
+    var position;
+    do {
+        position = Math.round(Math.random() * password.length - word.length); // set the start position of the word in the password
+    }
+    while (position < 0);
     var str = password.substr(position, word.length); // search of the replaced line
     return password.replace(str, word); // word insertion in the password
 }
