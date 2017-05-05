@@ -15,6 +15,24 @@ function passwordGen() {
         password = withSpecials(password); // generate the password with specific symbols
     }
     document.getElementsByName('password')[0].innerHTML = password; // write the password in textarea
+    return password;
+}
+
+function checkPassword() {
+    var password = passwordGen().replace(document.getElementsByName('word')[0].value.replace(/ /g, ''), '');
+    var chars = document.getElementsByName('chars')[0].checked ? password.search(/[a-z]/) : 0;
+    var bigChars = document.getElementsByName('bigChars')[0].checked ? password.search(/[A-Z]/) : 0;
+    var numbers = document.getElementsByName('numbers')[0].checked ? password.search(/\d/) : 0;
+    var specials = document.getElementsByName('specials')[0].checked ? password.search(/[!@#$%^&*()\-_+=;:,./?\\|`~[\]{}]/) : 0;
+    if (document.getElementsByName('chars')[0].checked + document.getElementsByName('bigChars')[0].checked +
+        document.getElementsByName('numbers')[0].checked + document.getElementsByName('specials')[0].checked +
+        document.getElementsByName('word')[0].value.replace(/ /g, '').length >= document.getElementsByName('length')[0].value) {
+        document.getElementsByName('password')[0].innerHTML = "Слишком маленькая длина пароля для таких настроек";
+        return;
+    }
+    if (chars === -1 || bigChars === -1 || numbers === -1 || specials === -1) {
+        checkPassword();
+    }
 }
 
 function disabledAnother(check) { // make elements 'numbers' and 'bigChars' disabled
