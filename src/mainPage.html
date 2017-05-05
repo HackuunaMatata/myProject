@@ -6,22 +6,27 @@
     <script src="passwordGen.js"></script>
 </head>
 <body>
-<form action="" onsubmit="checkPassword(); return false;">
-    <p><b>Введите количество символов в пароле:</b><br>
+<div style="display: flex; flex-direction: row">
+    <form onsubmit="checkPassword(); return false;"
+          style="margin: 0 2px; border: 1px solid grey; padding: 5px; width: 50%;">
+        <b>Введите количество символов в пароле:</b><br>
         <input name="length" type="number" value="8" min="8" max="81920">
-    </p>
-    <p><b>Введите слово, которое Вы хотите видеть в пароле:</b><br>
-        <input name="word" type="text">
-    </p>
-    <input type="checkbox" name="chars" onchange="disabledAnother(this)">Включить в пароль буквы<br>
-    <input type="checkbox" name="bigChars" disabled>Включить в пароль заглавные буквы<br>
-    <input type="checkbox" name="numbers" disabled checked>Включить в пароль цифры<br>
-    <input type="checkbox" name="specials">Включить в пароль специальные символы<br>
-    (такие как ! @ # $ % ^ & * ( ) - _ + = ; : , . / ? \ | ` ~ [ ] { })<br>
-    <p><textarea name="password" rows="5" cols="40" readonly>Здесь будет ваш пароль</textarea></p>
-
-    <!--<p><button name="myButton" onclick="passwordGen()">Генерация!</button></p>-->
-    <input type="submit" name="myButton" value="Генерация">
-</form>
+        <p><b>Введите слово, которое Вы хотите видеть в пароле:</b><br>
+            <input name="word" type="text">
+        </p>
+        <input type="checkbox" name="chars" onchange="disabledAnother(this)">Включить в пароль буквы<br>
+        <input type="checkbox" name="bigChars" disabled>Включить в пароль заглавные буквы<br>
+        <input type="checkbox" name="numbers" disabled checked>Включить в пароль цифры<br>
+        <input type="checkbox" name="specials">Включить в пароль специальные символы<br>
+        (такие как ! @ # $ % ^ & * ( ) - _ + = ; : , . / ? \ | ` ~ [ ] { })<br>
+        <p><textarea name="password" rows="5" cols="40" readonly>Здесь будет Ваш пароль</textarea></p>
+        <input type="submit" name="generate" value="Генерация">
+    </form>
+    <form style="margin: 0 2px; border: 1px solid grey; padding: 5px; width: 50%;">
+        <textarea name="userPassword" rows="5" cols="40">Введите пароль, который Вы хотите проверить</textarea><br><br>
+        <input type="submit" name="check" value="Проверить"><br><br>
+        <div name="results">Здесь будут выведены результаты</div>
+    </form>
+</div>
 </body>
 </html>
