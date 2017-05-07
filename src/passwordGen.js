@@ -20,10 +20,12 @@ function passwordGen() {
 
 function checkPassword() { // it even 2 crutches, but without them in any way
     // the password's length checking
-    if (document.getElementsByName('chars')[0].checked + document.getElementsByName('bigChars')[0].checked +
+    var needLength = document.getElementsByName('chars')[0].checked +
+        (document.getElementsByName('bigChars')[0].checked && !document.getElementsByName('bigChars')[0].disabled) +
         document.getElementsByName('numbers')[0].checked + document.getElementsByName('specials')[0].checked +
-        document.getElementsByName('word')[0].value.replace(/ /g, '').length >= document.getElementsByName('length')[0].value) {
-        document.getElementsByName('password')[0].innerHTML = "Слишком маленькая длина пароля для таких настроек";
+        document.getElementsByName('word')[0].value.replace(/ /g, '').length;
+    if (needLength > document.getElementsByName('length')[0].value) {
+        document.getElementsByName('password')[0].innerHTML = "Слишком маленькая длина пароля для таких настроек. Необходима длина пароля от " + (needLength) + " символов";
         return;
     }
     // verification of the password on observance of all conditions

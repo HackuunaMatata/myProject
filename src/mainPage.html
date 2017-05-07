@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>PasGenV2</title>
     <script src="passwordGen.js"></script>
+    <script src="passwordCheck.js"></script>
 </head>
 <body>
 <div style="display: flex; flex-direction: row">
@@ -22,10 +23,14 @@
         <p><textarea name="password" rows="5" cols="40" readonly>Здесь будет Ваш пароль</textarea></p>
         <input type="submit" name="generate" value="Генерация">
     </form>
-    <form style="margin: 0 2px; border: 1px solid grey; padding: 5px; width: 50%;">
-        <textarea name="userPassword" rows="5" cols="40">Введите пароль, который Вы хотите проверить</textarea><br><br>
+    <form onsubmit="sendTheData(); return false;" style="margin: 0 2px; border: 1px solid grey; padding: 5px; width: 50%;">
+        <b>Введите пароль, который Вы хотите проверить:</b><br>
+        <textarea name="userPassword" rows="5" cols="40" oninput="checkWord(this)"></textarea><br>
+        <p><b>Введите ту часть пароля, которую знает злоумышленник:</b><br>
+            <input name="badPart" type="text" oninput="checkWord(this)">
+        </p>
         <input type="submit" name="check" value="Проверить"><br><br>
-        <div name="results">Здесь будут выведены результаты</div>
+        <div id="results">Здесь будут выведены результаты</div>
     </form>
 </div>
 </body>
