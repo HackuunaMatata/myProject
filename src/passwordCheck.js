@@ -1,10 +1,21 @@
 function sendTheData() {
-    fetch('/checking', {method: 'post'}).then(function(res) {
-        return res.text();
-    }).then(function (res) {
+    document.getElementById('results').innerHTML = "Здесь будут выведены результаты";
+    fetch('/checking', {
+        method: 'post',
+        body: JSON.stringify({
+            password: document.getElementsByName('userPassword')[0].value,
+            word: document.getElementsByName('badPart')[0].value
+        })
+    })
+        .then(function (res) {
+            return res.text();
+        }).then(function (res) {
         document.getElementById('results').innerHTML = res;
     });
 }
+
+
+
 
 function checkWord(check) {
     var password = document.getElementsByName('userPassword')[0].value;
