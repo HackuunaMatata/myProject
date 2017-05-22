@@ -21,11 +21,11 @@ var server = http.createServer(function (request, response) {
                 object += data;
             }).on('end', function () {
                 body = JSON.parse(object);
-                var password = body.password.replace(/ /g, '').toLowerCase();
+                var password = body.password.replace(/ /g, '').replace(/\n/g, '').toLowerCase();
                 var word = body.word.replace(/ /g, '').toLowerCase();
                 tryCrashPassword(password, word).then(function (res) {
                     response.writeHeader(200);
-                    if (res > 5*60) {
+                    if (res > 5 * 60) {
                         response.end('Пароль взламывается больше ' + res / 60 + 'мин');
                     }
                     if (res > 60) {
@@ -97,14 +97,18 @@ function bruteforce(password) {
         var start = Date.now();
         while (string !== password) {
             string++;
+            if (string % 5000000 === 0) {
+                time = Date.now() - start;
+            }
+            if (time > 300000) {
+                resolve(time / 10000);
+            }
             string = '' + string;
             if (string.length < length) {
                 string = arr.slice(0, length - string.length).join('') + string;
             }
-            time = Date.now() - start;
-            if (time > 300000 ) resolve(time / 10000);
         }
-        time /= 1000;
+        time = (Date.now() - start) / 1000;
         console.log('eeeeeee');
         resolve(time);
     })
