@@ -54,6 +54,9 @@ function tryCrashPassword(password, word) {
     if (password === '') {
         return Promise.resolve('Вы не ввели пароль');
     }
+    if (word !== '') {
+        return attackWithMask(password, word);
+    }
     if (isFinite(password)) {
         return bruteforceForInt(password);
     }
@@ -66,8 +69,8 @@ function tryCrashPassword(password, word) {
     }
     return bruteforceForAll(password);
     /*if (word === '') {
-        return attackWithDictionary(password);
-    }*/
+     return attackWithDictionary(password);
+     }*/
     return attackWithMask(password, word);
 }
 
@@ -89,38 +92,29 @@ function attackWithDictionary(password) {
 
 function attackWithMask(password, word) {
     return new Promise(function (resolve, reject) {
-        resolve('Mask');
+        var time = 0;
+        password = password.split(word);
+        password = password.filter(function (value, index, arr) {
+            return value !== '';
+        });
+        if (password.length === 0) {
+            resolve(time);
+        }
+        var promises = [];
+        for (var i = 0; i < password.length; i++) {
+            promises.push(bruteforceForAll(password[i]));
+        }
+        var countTime = function (array) {
+            array.forEach(function (item, i, arr) {
+                time += item;
+            });
+            return time;
+        };
+        Promise.all(promises).then(function (res) {
+            resolve(countTime(res));
+        })
     })
 }
-
-/*function bruteforceForInt(password) {
-    return new Promise(function (resolve, reject) {
-        var length = password.length;
-        var time = 0;
-        var arr = new Array(length);
-        for (var i = 0; i < length; i++) {
-            arr[i] = 0;
-        }
-        var string = arr.join('');
-        var start = Date.now();
-        while (string !== password) {
-            string++;
-            if (string % 5000000 === 0) {
-                time = Date.now() - start;
-            }
-            if (time > 300000) {
-                resolve(time / 10000);
-            }
-            string = '' + string;
-            if (string.length < length) {
-                string = arr.slice(0, length - string.length).join('') + string;
-            }
-        }
-        time = (Date.now() - start) / 1000;
-        console.log('eeeeeee');
-        resolve(time);
-    })
-}*/
 
 function bruteforceForInt(password) {
     return new Promise(function (resolve, reject) {
@@ -163,17 +157,7 @@ function bruteforceForAll(password) {
 
 var bruteForce = function (characters, callback) {
     var i, intToCharacterBasedString, result;
-    /*if(typeof characters === 'string') {*/
-     characters = characters.split("");
-     /*}
-     characters.sort(); // Sort all characters
-     characters = characters.filter(function(value, index, arr){ //удаляем повторы
-     if(index < 1) {
-     return true;
-     } else {
-     return value !== arr[index-1];
-     }
-     });*/
+    characters = characters.split("");
     characters = [""].concat(characters); // Useless empty value to start this array on index = 1
     intToCharacterBasedString = function (num) { // Annoying algorithm..
         var charBasedString, modulo;
