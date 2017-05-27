@@ -1,7 +1,7 @@
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
-var lineReader = require('readline');
+var lineReader = require('line-reader');
 
 var mainPage = fs.readFileSync('./src/mainPage.html');
 var passwordGen = fs.readFileSync('./src/passwordGen.js');
@@ -23,15 +23,21 @@ var server = http.createServer(function (request, response) {
                 body = JSON.parse(object);
                 var password = body.password.replace(/ /g, '').replace(/\n/g, '').toLowerCase();
                 var word = body.word.replace(/ /g, '').toLowerCase();
-                tryCrashPassword(password, word).then(function (res) {
+                tryCrashPassword(password, word).then(function (obj) {
                     response.writeHeader(200);
-                    if (res > 5 * 60) {
-                        response.end('Пароль взламывается больше ' + res / 60 + 'мин');
+                    if (obj.time > 5 * 60) {
+                        response.end('Пароль взламывается больше '
+                            + ~~(obj.time / 60) + ' мин и ' + Math.ceil(obj.time - ~~(obj.time / 60) * 60) +
+                            ' сек</br> Пароль взламывается за ' + obj.count + ' операций');
                     }
-                    if (res > 60) {
-                        response.end('Пароль взламывается ' + res / 60 + 'мин');
+                    if (obj.time > 60) {
+                        response.end('Пароль взламывается '
+                            + ~~(obj.time / 60) + ' мин и ' + Math.ceil(obj.time - ~~(obj.time / 60) * 60) +
+                            ' сек</br> Пароль взламывается за ' + obj.count + ' операций');
                     }
-                    response.end('Пароль взламывается ' + res + 'сек');
+                    response.end('Пароль взламывается '
+                        + Math.ceil(obj.time) +
+                        ' сек </br> Пароль взламывается за ' + obj.count + ' операций');
 
                 });
             });
@@ -57,48 +63,47 @@ function tryCrashPassword(password, word) {
     if (word !== '') {
         return attackWithMask(password, word);
     }
-    if (isFinite(password)) {
-        return bruteforceForInt(password);
-    }
-    var chars = 0;
-    for (var i = 0; i < password.length; i++) {
-        if (('a' <= password[i]) && (password[i] <= 'z')) chars++;
-    }
-    if (chars === password.length) {
-        return bruteforceForChar(password);
-    }
-    return bruteforceForAll(password);
-    /*if (word === '') {
-     return attackWithDictionary(password);
-     }*/
-    return attackWithMask(password, word);
+    /*if (isFinite(password)) {
+     return bruteforceForInt(password);
+     }
+     var chars = 0;
+     for (var i = 0; i < password.length; i++) {
+     if (('a' <= password[i]) && (password[i] <= 'z')) chars++;
+     }
+     if (chars === password.length) {
+     return bruteforceForChar(password);
+     }
+     return bruteforceForAll(password);*/
+    return attackWithDictionary(password);
 }
 
 function attackWithDictionary(password) {
     return new Promise(function (resolve, reject) {
-        lineReader = lineReader.createInterface({
-            input: fs.createReadStream('./src/words/9mil.txt')
-        });
-        lineReader.on('line', function (line) {
-            console.log('Line from file:', line);
-        });
-        lineReader.on('close', function () {
-            console.log('EEEEEENNNNNNDDDDDDD');
-            resolve('uiiiii');
-        });
-    })
+        var time = 0;
+        var start = Date.now();
+        var count = 0;
+        lineReader.eachLine('./src/words/english.txt', function (line) {
+            count++;
+            time = Date.now() - start;
+            if (password !== line && time <= 30000) return true;
 
+            time = (Date.now() - start) / 1000;
+            resolve({time: time, count: count});
+            return false;
+        })
+    })
 }
 
 function attackWithMask(password, word) {
     return new Promise(function (resolve, reject) {
         var time = 0;
+        var count = 0;
         password = password.split(word);
         password = password.filter(function (value, index, arr) {
             return value !== '';
         });
         if (password.length === 0) {
-            resolve(time);
+            resolve({time: time, count: count});
         }
         var promises = [];
         for (var i = 0; i < password.length; i++) {
@@ -106,9 +111,10 @@ function attackWithMask(password, word) {
         }
         var countTime = function (array) {
             array.forEach(function (item, i, arr) {
-                time += item;
+                time += item.time;
+                count += item.count;
             });
-            return time;
+            return {time: time, count: count};
         };
         Promise.all(promises).then(function (res) {
             resolve(countTime(res));
@@ -120,12 +126,14 @@ function bruteforceForInt(password) {
     return new Promise(function (resolve, reject) {
         var time = 0;
         var start = Date.now();
+        var count = 0;
         bruteForce('0123456789', function (val) {
             time = Date.now() - start;
+            count++;
             return val === password || time > 300000;
         });
         time = (Date.now() - start) / 1000;
-        resolve(time);
+        resolve({time: time, count: count});
     })
 }
 
@@ -133,12 +141,14 @@ function bruteforceForChar(password) {
     return new Promise(function (resolve, reject) {
         var time = 0;
         var start = Date.now();
+        var count = 0;
         bruteForce('abcdefghijklmnopqrstuvwxyz', function (val) {
             time = Date.now() - start;
+            count++;
             return val === password || (Date.now() - start) > 300000;
         });
         time = (Date.now() - start) / 1000;
-        resolve(time);
+        resolve({time: time, count: count});
     })
 }
 
@@ -146,12 +156,14 @@ function bruteforceForAll(password) {
     return new Promise(function (resolve, reject) {
         var time = 0;
         var start = Date.now();
+        var count = 0;
         bruteForce('abcdefghijklmnopqrstuvwxyz0123456789!\\"#@`$%^&*()_-=+*/\';:.,?|<>[]{}~', function (val) {
             time = Date.now() - start;
+            count++;
             return val === password || (Date.now() - start) > 300000;
         });
         time = (Date.now() - start) / 1000;
-        resolve(time);
+        resolve({time: time, count: count});
     })
 }
 
