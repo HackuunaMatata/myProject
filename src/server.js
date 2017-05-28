@@ -68,17 +68,18 @@ function tryCrashPassword(password, word) {
         return attackWithMask(password, word);
     }
     if (isFinite(password)) {
-     return bruteforceForInt(password);
-     }
-     var chars = 0;
-     for (var i = 0; i < password.length; i++) {
-     if (('a' <= password[i]) && (password[i] <= 'z')) chars++;
-     }
-     if (chars === password.length) {
-     return bruteforceForChar(password);
-     }
-     return bruteforceForAll(password);
+        return bruteforceForInt(password);
+    }
+    var chars = 0;
+    for (var i = 0; i < password.length; i++) {
+        if (('a' <= password[i]) && (password[i] <= 'z')) chars++;
+    }
+    if (chars === password.length) {
+        return bruteforceForChar(password);
+    }
+    return bruteforceForAll(password);
     //return attackWithDictionary(password);
+    //return bruteforceForIntWithLength(password);
 }
 
 function attackWithDictionary(password) {
@@ -197,6 +198,37 @@ var bruteForce = function (characters, callback) {
         i++;
     }
 };
+
+function bruteforceForIntWithLength(password) {
+    return new Promise(function (resolve, reject) {
+        var length = password.length;
+        var time = 0;
+        var count = 0;
+        var arr = new Array(length);
+        for (var i = 0; i < length; i++) {
+            arr[i] = 0;
+        }
+        var string = arr.join('');
+        var start = Date.now();
+        while (string !== password) {
+            string++;
+            count++;
+            if (string % 5000000 === 0) {
+                time = Date.now() - start;
+            }
+            if (time > 300000) {
+                time /= 1000;
+                resolve({time: time, count: count});
+            }
+            string = '' + string;
+            if (string.length < length) {
+                string = arr.slice(0, length - string.length).join('') + string;
+            }
+        }
+        time = (Date.now() - start) / 1000;
+        resolve({time: time, count: count});
+    })
+}
 
 server.listen(1110);
 console.info('Server started!');
