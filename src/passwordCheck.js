@@ -1,5 +1,6 @@
 function sendTheData() {
     document.getElementById('results').innerHTML = "Здесь будут выведены результаты";
+    document.getElementById('loader').style.display = 'block';
     fetch('/checking', {
         method: 'post',
         body: JSON.stringify({
@@ -10,12 +11,10 @@ function sendTheData() {
         .then(function (res) {
             return res.text();
         }).then(function (res) {
+        document.getElementById('loader').style.display = 'none';
         document.getElementById('results').innerHTML = res;
     });
 }
-
-
-
 
 function checkWord(check) {
     var password = document.getElementsByName('userPassword')[0].value;

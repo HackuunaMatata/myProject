@@ -5,6 +5,7 @@
     <title>PasGenV2</title>
     <script src="passwordGen.js"></script>
     <script src="passwordCheck.js"></script>
+    <link rel="stylesheet" type="text/css" href="loader.css">
 </head>
 <body>
 <div style="display: flex; flex-direction: row">
@@ -19,11 +20,21 @@
         <label><input type="checkbox" name="bigChars" disabled>Включить в пароль заглавные буквы<br></label>
         <label><input type="checkbox" name="numbers" disabled checked>Включить в пароль цифры<br></label>
         <label><input type="checkbox" name="specials">Включить в пароль специальные символы<br></label>
-        <div style="font-size: 12px; color: #3f3f3f;">(такие как ! @ # $ % ^ & * ( ) - _ + = ; : , . / ? \ | ` ~ [ ] { })</div>
+        <div style="font-size: 12px; color: #3f3f3f;">(такие как ! @ # $ % ^ & * ( ) - _ + = ; : , . / ? \ | ` ~ [ ] {
+            })
+        </div>
         <p><textarea name="password" rows="5" cols="40" readonly>Здесь будет Ваш пароль</textarea></p>
         <input type="submit" name="generate" value="Генерация">
     </form>
-    <form onsubmit="sendTheData(); return false;" style="margin: 0 2px; border: 1px solid grey; padding: 5px; width: 50%;">
+    <form onsubmit="sendTheData(); return false;"
+          style="margin: 0 2px; border: 1px solid grey; padding: 5px; width: 50%; position: relative;">
+        <div id="loader" style="position: absolute; display: none; top: 0; bottom: 0; left: 0; right: 0; background-color: rgba(218, 221, 234, 0.5);">
+            <div class="cssload-loader">
+                <div class="cssload-inner cssload-one"></div>
+                <div class="cssload-inner cssload-two"></div>
+                <div class="cssload-inner cssload-three"></div>
+            </div>
+        </div>
         <b>Введите пароль, который Вы хотите проверить:</b><br>
         <textarea name="userPassword" rows="5" cols="40" oninput="checkWord(this)"></textarea><br>
         <p><b>Введите ту часть пароля, которую знает злоумышленник:</b><br>

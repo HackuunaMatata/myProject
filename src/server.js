@@ -6,6 +6,7 @@ var lineReader = require('line-reader');
 var mainPage = fs.readFileSync('./src/mainPage.html');
 var passwordGen = fs.readFileSync('./src/passwordGen.js');
 var passwordCheck = fs.readFileSync('./src/passwordCheck.js');
+var loaderCss = fs.readFileSync('./src/loader.css');
 
 var server = http.createServer(function (request, response) {
 
@@ -39,6 +40,8 @@ var server = http.createServer(function (request, response) {
                         + Math.ceil(obj.time) +
                         ' сек </br> Пароль взламывается за ' + obj.count + ' операций');
 
+                }, function (err) {
+                    response.end(err);
                 });
             });
             break;
@@ -52,18 +55,19 @@ function fromURLtoFile(url) {
     return {
         '/': mainPage,
         '/passwordGen.js': passwordGen,
-        '/passwordCheck.js': passwordCheck
+        '/passwordCheck.js': passwordCheck,
+        '/loader.css': loaderCss
     }[url];
 }
 
 function tryCrashPassword(password, word) {
     if (password === '') {
-        return Promise.resolve('Вы не ввели пароль');
+        return Promise.reject('Вы не ввели пароль');
     }
     if (word !== '') {
         return attackWithMask(password, word);
     }
-    /*if (isFinite(password)) {
+    if (isFinite(password)) {
      return bruteforceForInt(password);
      }
      var chars = 0;
@@ -73,8 +77,8 @@ function tryCrashPassword(password, word) {
      if (chars === password.length) {
      return bruteforceForChar(password);
      }
-     return bruteforceForAll(password);*/
-    return attackWithDictionary(password);
+     return bruteforceForAll(password);
+    //return attackWithDictionary(password);
 }
 
 function attackWithDictionary(password) {
@@ -82,11 +86,14 @@ function attackWithDictionary(password) {
         var time = 0;
         var start = Date.now();
         var count = 0;
-        lineReader.eachLine('./src/words/english.txt', function (line) {
+        lineReader.eachLine('./src/words/test.txt', function (line, last) {
             count++;
             time = Date.now() - start;
+            if (last) {
+                reject('Такого пароля нет в наших словарях');
+                return false;
+            }
             if (password !== line && time <= 30000) return true;
-
             time = (Date.now() - start) / 1000;
             resolve({time: time, count: count});
             return false;
