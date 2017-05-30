@@ -175,24 +175,24 @@ function bruteforceForAll(password) {
     })
 }
 
-var bruteForce = function (characters, callback) {
+var bruteForce = function (characters, callback) { // brute force
     var i, intToCharacterBasedString, result;
-    characters = characters.split("");
-    characters = [""].concat(characters); // Useless empty value to start this array on index = 1
-    intToCharacterBasedString = function (num) { // Annoying algorithm..
+    characters = characters.split(""); // do the alphabet by an array
+    characters = [""].concat(characters); // useless empty value to start this array on index = 1
+    intToCharacterBasedString = function (num) { // annoying algorithm
         var charBasedString, modulo;
         charBasedString = "";
-        while (num > 0) {
-            modulo = num % characters.length; // Basic calculating
-            charBasedString = characters[modulo] + charBasedString; // Just push it before the old characters
-            num = ((num - modulo) / characters.length); // New value of num, annoying calculation
+        while (num > 0) { // search of all possible combinations
+            modulo = num % characters.length; // basic calculating
+            charBasedString = characters[modulo] + charBasedString; // just push it before the old characters
+            num = ((num - modulo) / characters.length); // new value of num, annoying calculation
         }
         return charBasedString;
     };
     i = 1;
     while (i > 0) {
         result = callback(intToCharacterBasedString(i));
-        if (result) { // If callbacks returns true: we did our job!
+        if (result) { // if callbacks returns true: we did our job!
             break;
         }
         i++;
