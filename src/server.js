@@ -7,6 +7,7 @@ var mainPage = fs.readFileSync('./src/mainPage.html');
 var passwordGen = fs.readFileSync('./src/passwordGen.js');
 var passwordCheck = fs.readFileSync('./src/passwordCheck.js');
 var loaderCss = fs.readFileSync('./src/loader.css');
+var favicon = fs.readFileSync('./src/favicon.ico');
 
 var server = http.createServer(function (request, response) {
 
@@ -56,7 +57,8 @@ function fromURLtoFile(url) {
         '/': mainPage,
         '/passwordGen.js': passwordGen,
         '/passwordCheck.js': passwordCheck,
-        '/loader.css': loaderCss
+        '/loader.css': loaderCss,
+        '/favicon.ico': favicon
     }[url];
 }
 
