@@ -22,9 +22,9 @@ var server = http.createServer(function (request, response) {
             request.on('data', function (data) {
                 object += data;
             }).on('end', function () {
-                body = JSON.parse(object);
-                var password = body.password.replace(/ /g, '').replace(/\n/g, '').toLowerCase();
-                var word = body.word.replace(/ /g, '').toLowerCase();
+                body = JSON.parse(object); // get parameters
+                var password = body.password.replace(/ /g, '').replace(/\n/g, '').toLowerCase(); // remove all gaps and enters from password
+                var word = body.word.replace(/ /g, '').toLowerCase();  // remove all gaps from word
                 tryCrashPassword(password, word).then(function (obj) {
                     response.writeHeader(200);
                     if (obj.time > 5 * 60) {
@@ -62,7 +62,7 @@ function fromURLtoFile(url) {
     }[url];
 }
 
-function tryCrashPassword(password, word) {
+function tryCrashPassword(password, word) { // decides how to crash the password
     if (password === '') {
         return Promise.reject('Вы не ввели пароль');
     }
@@ -71,6 +71,7 @@ function tryCrashPassword(password, word) {
     }
     if (isFinite(password)) {
         return bruteforceForInt(password);
+        //return bruteforceForIntWithLength(password);
     }
     var chars = 0;
     for (var i = 0; i < password.length; i++) {
@@ -81,10 +82,9 @@ function tryCrashPassword(password, word) {
     }
     return bruteforceForAll(password);
     //return attackWithDictionary(password);
-    //return bruteforceForIntWithLength(password);
 }
 
-function attackWithDictionary(password) {
+function attackWithDictionary(password) { // use dictionary to crash the password
     return new Promise(function (resolve, reject) {
         var time = 0;
         var start = Date.now();
@@ -92,34 +92,34 @@ function attackWithDictionary(password) {
         lineReader.eachLine('./src/words/test.txt', function (line, last) {
             count++;
             time = Date.now() - start;
-            if (last) {
+            if (last) { // if it was last word in dictionary
                 reject('Такого пароля нет в наших словарях');
                 return false;
             }
-            if (password !== line && time <= 30000) return true;
+            if (password !== line && time <= 30000) return true; // if line is not a password
             time = (Date.now() - start) / 1000;
-            resolve({time: time, count: count});
+            resolve({time: time, count: count}); // we find password
             return false;
         })
     })
 }
 
-function attackWithMask(password, word) {
+function attackWithMask(password, word) { // use word to crash the password
     return new Promise(function (resolve, reject) {
         var time = 0;
         var count = 0;
-        password = password.split(word);
-        password = password.filter(function (value, index, arr) {
+        password = password.split(word); // make an array without words
+        password = password.filter(function (value, index, arr) { // remove all empty elements from the array
             return value !== '';
         });
-        if (password.length === 0) {
+        if (password.length === 0) { // if word === password return the answer
             resolve({time: time, count: count});
         }
         var promises = [];
         for (var i = 0; i < password.length; i++) {
-            promises.push(bruteforceForAll(password[i]));
+            promises.push(bruteforceForAll(password[i])); // use brute force for every element from array
         }
-        var countTime = function (array) {
+        var countTime = function (array) { // count summary time and operations
             array.forEach(function (item, i, arr) {
                 time += item.time;
                 count += item.count;
@@ -132,12 +132,12 @@ function attackWithMask(password, word) {
     })
 }
 
-function bruteforceForInt(password) {
+function bruteforceForInt(password) { // crash password contains only numbers
     return new Promise(function (resolve, reject) {
         var time = 0;
         var start = Date.now();
         var count = 0;
-        bruteForce('0123456789', function (val) {
+        bruteForce('0123456789', function (val) { // call brute force with small alphabet
             time = Date.now() - start;
             count++;
             return val === password || time > 300000;
@@ -147,12 +147,12 @@ function bruteforceForInt(password) {
     })
 }
 
-function bruteforceForChar(password) {
+function bruteforceForChar(password) { // crash password contains only small chars
     return new Promise(function (resolve, reject) {
         var time = 0;
         var start = Date.now();
         var count = 0;
-        bruteForce('abcdefghijklmnopqrstuvwxyz', function (val) {
+        bruteForce('abcdefghijklmnopqrstuvwxyz', function (val) { // call brute force with small alphabet
             time = Date.now() - start;
             count++;
             return val === password || (Date.now() - start) > 300000;
@@ -162,12 +162,12 @@ function bruteforceForChar(password) {
     })
 }
 
-function bruteforceForAll(password) {
+function bruteforceForAll(password) { // crash password
     return new Promise(function (resolve, reject) {
         var time = 0;
         var start = Date.now();
         var count = 0;
-        bruteForce('abcdefghijklmnopqrstuvwxyz0123456789!\\"#@`$%^&*()_-=+*/\';:.,?|<>[]{}~', function (val) {
+        bruteForce('abcdefghijklmnopqrstuvwxyz0123456789!\\"#@`$%^&*()_-=+*/\';:.,?|<>[]{}~', function (val) { // call brute force with large alphabet
             time = Date.now() - start;
             count++;
             return val === password || (Date.now() - start) > 300000;
@@ -201,18 +201,18 @@ var bruteForce = function (characters, callback) { // brute force
     }
 };
 
-function bruteforceForIntWithLength(password) {
+function bruteforceForIntWithLength(password) { // crash password contains only numbers and known length
     return new Promise(function (resolve, reject) {
-        var length = password.length;
+        var length = password.length; // find the length of the password
         var time = 0;
         var count = 0;
-        var arr = new Array(length);
-        for (var i = 0; i < length; i++) {
+        var arr = new Array(length); // create an array of necessary length
+        for (var i = 0; i < length; i++) { // filling of the array with zero
             arr[i] = 0;
         }
         var string = arr.join('');
         var start = Date.now();
-        while (string !== password) {
+        while (string !== password) { // selection of a combination
             string++;
             count++;
             if (string % 5000000 === 0) {
