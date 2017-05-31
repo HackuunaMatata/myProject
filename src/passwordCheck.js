@@ -19,7 +19,7 @@ function sendTheData() {
 function checkWord(check) {
     var password = document.getElementsByName('userPassword')[0].value;
     var word = document.getElementsByName('badPart')[0].value;
-    if (password.search(word) === -1 && word.length !== 0) {
+    if (password.replace(word).length === password.length && word.length !== 0) {
         document.getElementsByName('badPart')[0].style = 'border-color : red';
         document.getElementById('results').innerHTML = "В Вашем пароле нет такого фрагмента";
         document.getElementById('results').style = 'color : red';
