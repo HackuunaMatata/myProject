@@ -79,6 +79,7 @@ function tryCrashPassword(password, word) { // decides how to crash the password
     }
     if (chars === password.length) {
         return bruteforceForChar(password);
+        //return attackWithDictionary(password);
     }
     return bruteforceForAll(password);
     //return attackWithDictionary(password);
@@ -89,7 +90,7 @@ function attackWithDictionary(password) { // use dictionary to crash the passwor
         var time = 0;
         var start = Date.now();
         var count = 0;
-        lineReader.eachLine('./src/words/test.txt', function (line, last) {
+        lineReader.eachLine('./src/words/rockyou.txt', function (line, last) {
             count++;
             time = Date.now() - start;
             if (last) { // if it was last word in dictionary
@@ -170,7 +171,7 @@ function bruteforceForAll(password) { // crash password
         bruteForce('abcdefghijklmnopqrstuvwxyz0123456789!\\"#@`$%^&*()_-=+*/\';:.,?|<>[]{}~', function (val) { // call brute force with large alphabet
             time = Date.now() - start;
             count++;
-            return val === password || (Date.now() - start) > 300000;
+            return val === password || (Date.now() - start) > 1000000;
         });
         time = (Date.now() - start) / 1000;
         resolve({time: time, count: count});
